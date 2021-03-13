@@ -74,6 +74,12 @@ void draw() {
   }
 }
 
+void keyPressed() {
+  if (key == ' ') {
+    ((Player)gameObjects[PLAYER_INDEX]).jump();
+  }
+}
+
 boolean collision(Player a, GameObject b) {
   // player to platform (rect to rect)
   if (b.GO_SHAPE == 0) {
