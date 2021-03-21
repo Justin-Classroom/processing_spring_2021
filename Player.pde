@@ -7,7 +7,8 @@ class Player extends GameObject {
   
   Player() {
     GO_SHAPE = 0;
-    w = l = 50;
+    w = 66;
+    l = 92;
     floor = PLAYER_POS_Y + l / 2;
   }
   
@@ -28,7 +29,7 @@ class Player extends GameObject {
   }
   
   void draw() {
-    rect(x, y, w, l);
+    sprite.draw(x, y);
   }
   
 }

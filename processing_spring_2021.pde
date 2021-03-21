@@ -24,9 +24,16 @@ static final int NUM_OF_OBJECTS = 2;
 static final int NUM_OF_OBSTACLES = 5;
 static final int NUM_OF_PLATFORMS = 20;
 
+int gameSpeed = 5;
+
+PImage playerSprite;
+
 void setup() {
   size(1000, 600);
   rectMode(CENTER);
+  imageMode(CENTER);
+  
+  playerSprite = loadImage("p1_front.png");
   
   gameObjects = new GameObject[
     NUM_OF_OBJECTS +
@@ -37,6 +44,7 @@ void setup() {
   // creating a player and score counter
   gameObjects[PLAYER_INDEX] = new Player();
   gameObjects[PLAYER_INDEX].setPos(PLAYER_POS_X, PLAYER_POS_Y);
+  gameObjects[PLAYER_INDEX].setSprite(playerSprite);
   gameObjects[SCORE_INDEX] = new ScoreCounter();
   gameObjects[SCORE_INDEX].setPos(SCORE_POS_X, SCORE_POS_Y);
   
@@ -59,10 +67,13 @@ void draw() {
   background(#9A95E3);
   for (int i = 0 ; i < gameObjects.length; i++) {
     gameObjects[i].draw();
-    gameObjects[i].update(5); // refactor out magic number (what is 5?)
+    gameObjects[i].update(gameSpeed);
     
     // collision checking only for obstacles and platforms
     if (i == PLAYER_INDEX || i == SCORE_INDEX) continue;
+    
+    if (hasCrossedEnd(gameObjects[i])) gameObjects[i].setPos(random(width + 100, width + 2000), random(50, height - 50));
+    
     // discard objects that are on the opposite side of the game
     if (gameObjects[i].getX() > width / 2) continue;
     
@@ -78,6 +89,14 @@ void keyPressed() {
   if (key == ' ') {
     ((Player)gameObjects[PLAYER_INDEX]).jump();
   }
+}
+
+boolean hasCrossedEnd(GameObject object) {
+  // 0 - left edge of the screen
+  // object.getX() - center of the object
+  // object.getWidth(); - full width of the object
+  // if right side of the object crosses the left edge of the screen
+  return false;
 }
 
 boolean collision(Player a, GameObject b) {

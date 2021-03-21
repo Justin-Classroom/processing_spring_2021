@@ -8,7 +8,11 @@ class GameObject {
   float l;
   color c = color(255, 255, 255);
   
-  GameObject() {}
+  Sprite sprite;
+  
+  GameObject() {
+    sprite = new Sprite();
+  }
   
   float getX() { return x; }
   float getY() { return y; }
@@ -25,6 +29,10 @@ class GameObject {
   
   void setColor(color c) {
     this.c = c;
+  }
+  
+  void setSprite(PImage img) {
+    this.sprite.setSprite(img);
   }
   
   void update(float speed) {
