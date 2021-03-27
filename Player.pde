@@ -7,9 +7,11 @@ class Player extends GameObject {
   
   Player() {
     GO_SHAPE = 0;
-    w = 66;
-    l = 92;
-    floor = PLAYER_POS_Y + l / 2;
+  }
+  
+  void setPos(float x, float y) {
+    super.setPos(x, y);
+    floor = y + l / 2;
   }
   
   void jump() {
@@ -27,9 +29,4 @@ class Player extends GameObject {
       velocity += gravity;
     }
   }
-  
-  void draw() {
-    sprite.draw(x, y);
-  }
-  
 }

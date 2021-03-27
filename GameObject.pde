@@ -33,12 +33,14 @@ class GameObject {
   
   void setSprite(PImage img) {
     this.sprite.setSprite(img);
+    this.w = img.width;
+    this.l = img.height;
   }
   
   void update(float speed) {
   }
   
   void draw() {
-    fill(c);
+    this.sprite.draw(this.x, this.y);
   }
 }

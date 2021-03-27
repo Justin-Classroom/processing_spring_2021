@@ -10,23 +10,23 @@
 // have a public functions to access points
 // function to increase points by a set amount (when passing obstacles)
 
-GameObject[] gameObjects;
+ArrayList<GameObject> gameObjects;
+Player player;
 
 static final int PLAYER_POS_X = 100;
-static final int PLAYER_POS_Y = 300;
 static final int SCORE_POS_X = 800;
 static final int SCORE_POS_Y = 50;
 
-static final int PLAYER_INDEX = 0;
-static final int SCORE_INDEX = 1;
-
-static final int NUM_OF_OBJECTS = 2;
 static final int NUM_OF_OBSTACLES = 5;
 static final int NUM_OF_PLATFORMS = 20;
 
 int gameSpeed = 5;
+int ground = 400;
 
 PImage playerSprite;
+PImage platformSprite;
+PImage obstacleSprite1;
+PImage obstacleSprite2;
 
 void setup() {
   size(1000, 600);
@@ -34,60 +34,58 @@ void setup() {
   imageMode(CENTER);
   
   playerSprite = loadImage("p1_front.png");
+  platformSprite = loadImage("grass.png");
+  obstacleSprite1 = loadImage("boxItem.png");
+  obstacleSprite2 = loadImage("brickWall.png");
   
-  gameObjects = new GameObject[
-    NUM_OF_OBJECTS +
-    NUM_OF_OBSTACLES +
-    NUM_OF_PLATFORMS
-  ];
+  gameObjects = new ArrayList<GameObject>();
   
   // creating a player and score counter
-  gameObjects[PLAYER_INDEX] = new Player();
-  gameObjects[PLAYER_INDEX].setPos(PLAYER_POS_X, PLAYER_POS_Y);
-  gameObjects[PLAYER_INDEX].setSprite(playerSprite);
-  gameObjects[SCORE_INDEX] = new ScoreCounter();
-  gameObjects[SCORE_INDEX].setPos(SCORE_POS_X, SCORE_POS_Y);
+  player = new Player();
+  player.setSprite(playerSprite);
+  player.setPos(PLAYER_POS_X, ground - (playerSprite.height / 2));
+  gameObjects.add(player);
+  
+  GameObject score = new ScoreCounter();
+  score.setPos(SCORE_POS_X, SCORE_POS_Y);
+  gameObjects.add(score);
   
   // creating platforms and obstacles;
-  for (int iter = NUM_OF_OBJECTS; iter < gameObjects.length; iter++) {
-    if ( iter < NUM_OF_OBJECTS + NUM_OF_OBSTACLES) {
-      gameObjects[iter] = new Obstacle();
-    } else {
-      gameObjects[iter] = new Platform();
-    }
-    
-    float x = random(width + 100, width + 2000);
-    float y = random(50, height - 50);
-    
-    gameObjects[iter].setPos(x, y);
+  for (int iter = 0; iter < NUM_OF_PLATFORMS; iter++) {
+      GameObject platform = new Platform();
+      platform.setSprite(platformSprite);
+      
+      float x = 300;
+      platform.setPos(x, ground + (platformSprite.height / 2));
+      gameObjects.add(platform);
   }
 }
 
 void draw() {
   background(#9A95E3);
-  for (int i = 0 ; i < gameObjects.length; i++) {
-    gameObjects[i].draw();
-    gameObjects[i].update(gameSpeed);
+  for (int i = 0 ; i < gameObjects.size(); i++) {
+    gameObjects.get(i).draw();
+    gameObjects.get(i).update(gameSpeed);
     
     // collision checking only for obstacles and platforms
-    if (i == PLAYER_INDEX || i == SCORE_INDEX) continue;
+    if (gameObjects.get(i) instanceof Player || gameObjects.get(i) instanceof ScoreCounter) continue;
     
-    if (hasCrossedEnd(gameObjects[i])) gameObjects[i].setPos(random(width + 100, width + 2000), random(50, height - 50));
+    if (hasCrossedEnd(gameObjects.get(i))) gameObjects.get(i).setPos(random(width + 100, width + 2000), random(50, height - 50));
     
     // discard objects that are on the opposite side of the game
-    if (gameObjects[i].getX() > width / 2) continue;
+    if (gameObjects.get(i).getX() > width / 2) continue;
     
-    if (collision((Player)gameObjects[PLAYER_INDEX], gameObjects[i])) {
-      gameObjects[i].setColor(color(255, 0, 0));
+    if (collision(player, gameObjects.get(i))) {
+      gameObjects.get(i).setColor(color(255, 0, 0));
     } else {
-      gameObjects[i].setColor(color(255, 255, 255));
+      gameObjects.get(i).setColor(color(255, 255, 255));
     }
   }
 }
 
 void keyPressed() {
   if (key == ' ') {
-    ((Player)gameObjects[PLAYER_INDEX]).jump();
+    player.jump();
   }
 }
 
