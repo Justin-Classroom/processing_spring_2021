@@ -54,31 +54,44 @@ void setup() {
   for (int iter = 0; iter < NUM_OF_PLATFORMS; iter++) {
       GameObject platform = new Platform();
       platform.setSprite(platformSprite);
-      
-      float x = 300;
-      platform.setPos(x, ground + (platformSprite.height / 2));
+      platform.setPos(
+        iter * platformSprite.width, 
+        ground + (platformSprite.height / 2)
+      );
       gameObjects.add(platform);
   }
+  
+  for (int iter = 0; iter < NUM_OF_OBSTACLES; iter++) {
+      GameObject obstacle = new Obstacle();
+      obstacle.setSprite(obstacleSprite1);
+      gameObjects.add(obstacle);
+  }
+  
 }
 
 void draw() {
   background(#9A95E3);
+  
+  float timer = millis();
+  if (timer % 10000 < 0.1) spawnObstacle();
+  
   for (int i = 0 ; i < gameObjects.size(); i++) {
-    gameObjects.get(i).draw();
-    gameObjects.get(i).update(gameSpeed);
+    GameObject object = gameObjects.get(i);
+    object.draw();
+    object.update(gameSpeed);
     
     // collision checking only for obstacles and platforms
-    if (gameObjects.get(i) instanceof Player || gameObjects.get(i) instanceof ScoreCounter) continue;
+    if (object instanceof Player || object instanceof ScoreCounter) continue;
     
-    if (hasCrossedEnd(gameObjects.get(i))) gameObjects.get(i).setPos(random(width + 100, width + 2000), random(50, height - 50));
+    if (hasCrossedEnd(object)) object.setPos(i * platformSprite.width, ground + (platformSprite.height / 2));
     
     // discard objects that are on the opposite side of the game
-    if (gameObjects.get(i).getX() > width / 2) continue;
+    if (object.getX() > width / 2) continue;
     
-    if (collision(player, gameObjects.get(i))) {
-      gameObjects.get(i).setColor(color(255, 0, 0));
+    if (collision(player, object)) {
+      object.setColor(color(255, 0, 0));
     } else {
-      gameObjects.get(i).setColor(color(255, 255, 255));
+      object.setColor(color(255, 255, 255));
     }
   }
 }
