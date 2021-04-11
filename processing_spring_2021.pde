@@ -11,6 +11,7 @@
 // function to increase points by a set amount (when passing obstacles)
 
 ArrayList<GameObject> gameObjects;
+ArrayList<Obstacle> obstacles;
 Player player;
 
 static final int PLAYER_POS_X = 100;
@@ -39,6 +40,7 @@ void setup() {
   obstacleSprite2 = loadImage("brickWall.png");
   
   gameObjects = new ArrayList<GameObject>();
+  obstacles = new ArrayList<Obstacle>();
   
   // creating a player and score counter
   player = new Player();
@@ -64,19 +66,24 @@ void setup() {
   for (int iter = 0; iter < NUM_OF_OBSTACLES; iter++) {
       GameObject obstacle = new Obstacle();
       obstacle.setSprite(obstacleSprite1);
+      obstacle.isActive = false;
       gameObjects.add(obstacle);
+      obstacles.add((Obstacle) obstacle);
   }
   
 }
 
 void draw() {
-  background(#9A95E3);
+  background(#9A95E3); //<>//
   
   float timer = millis();
-  if (timer % 10000 < 0.1) spawnObstacle();
-  
+  float duration = 10000; // in ms (10s)
+  float deviation = 100;
+  if (timer % duration < deviation) spawnObstacle();
   for (int i = 0 ; i < gameObjects.size(); i++) {
     GameObject object = gameObjects.get(i);
+    if (!object.isActive) continue;
+    
     object.draw();
     object.update(gameSpeed);
     
@@ -99,6 +106,21 @@ void draw() {
 void keyPressed() {
   if (key == ' ') {
     player.jump();
+  }
+}
+
+// grab an obstacle
+// check if isActive is false
+// move it to the right of the screen
+// set the isActive to true
+void spawnObstacle() {
+  for (int i = 0; i < obstacles.size(); i++) {
+    Obstacle obstacle = obstacles.get(i);
+    if (obstacle.isActive) continue;
+    
+    // moving
+    
+    obstacle.isActive = true;
   }
 }
 

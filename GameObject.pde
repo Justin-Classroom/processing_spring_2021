@@ -2,6 +2,8 @@ class GameObject {
   
   public float GO_SHAPE; // 0 for rect, 1 for ellipse
   
+  boolean isActive;
+  
   float x;
   float y;
   float w;
@@ -12,6 +14,7 @@ class GameObject {
   
   GameObject() {
     sprite = new Sprite();
+    isActive = true;
   }
   
   float getX() { return x; }
