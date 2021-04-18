@@ -23,6 +23,7 @@ static final int NUM_OF_PLATFORMS = 20;
 
 int gameSpeed = 5;
 int ground = 400;
+float timer = 0;
 
 PImage playerSprite;
 PImage platformSprite;
@@ -74,12 +75,15 @@ void setup() {
 }
 
 void draw() {
-  background(#9A95E3); //<>//
+  background(#9A95E3);
   
-  float timer = millis();
-  float duration = 10000; // in ms (10s)
-  float deviation = 100;
-  if (timer % duration < deviation) spawnObstacle();
+  timer += 1;
+  float duration = 180;
+  if (timer == duration) {
+    spawnObstacle();
+    timer = 0;
+  }
+  
   for (int i = 0 ; i < gameObjects.size(); i++) {
     GameObject object = gameObjects.get(i);
     if (!object.isActive) continue;
@@ -88,12 +92,16 @@ void draw() {
     object.update(gameSpeed);
     
     // collision checking only for obstacles and platforms
-    if (object instanceof Player || object instanceof ScoreCounter) continue;
+    if (object instanceof Player || 
+      object instanceof ScoreCounter || 
+      object.getX() > width / 2) 
+        continue;
     
-    if (hasCrossedEnd(object)) object.setPos(i * platformSprite.width, ground + (platformSprite.height / 2));
-    
-    // discard objects that are on the opposite side of the game
-    if (object.getX() > width / 2) continue;
+    if (hasCrossedEnd(object)) {
+      if (object instanceof Platform) object.setPos(i * platformSprite.width, ground + (platformSprite.height / 2));
+      if (object instanceof Obstacle) object.isActive = false;
+      continue;
+    }
     
     if (collision(player, object)) {
       object.setColor(color(255, 0, 0));
@@ -118,9 +126,12 @@ void spawnObstacle() {
     Obstacle obstacle = obstacles.get(i);
     if (obstacle.isActive) continue;
     
-    // moving
+    // move to the start location
+    obstacle.setPos(width, ground - obstacle.getLength() / 2);
     
     obstacle.isActive = true;
+    
+    break;
   }
 }
 
