@@ -10,6 +10,7 @@
 // have a public functions to access points
 // function to increase points by a set amount (when passing obstacles)
 
+// polymorhpism
 ArrayList<GameObject> gameObjects;
 ArrayList<Obstacle> obstacles;
 Player player;
@@ -77,6 +78,19 @@ void setup() {
 void draw() {
   background(#9A95E3);
   
+  gameMenu();
+  
+}
+
+void gameMenu() {
+  textAlign(CENTER, CENTER);
+  textSize(40);
+  text("Infinite Runner", width / 2, 1*height / 3);
+  textSize(18);
+  text("Start Game", width/ 2, height / 2);
+}
+
+void gameplay() {
   timer += 1;
   float duration = 180;
   if (timer == duration) {
