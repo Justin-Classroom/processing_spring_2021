@@ -10,7 +10,16 @@
 // have a public functions to access points
 // function to increase points by a set amount (when passing obstacles)
 
-// polymorhpism
+
+
+// object oriented programming (OOP)
+// 4 main concepts
+// encapsulation - functions, class
+// abstraction - class, variables
+// inheritance - extends (parent-child class)
+// polymorhpism - become many things
+
+
 ArrayList<GameObject> gameObjects;
 ArrayList<Obstacle> obstacles;
 Player player;
@@ -88,6 +97,9 @@ void gameMenu() {
   text("Infinite Runner", width / 2, 1*height / 3);
   textSize(18);
   text("Start Game", width/ 2, height / 2);
+  noFill();
+  stroke(0, 0, 0);
+  rect(width / 2, height / 2, 180, 60);
 }
 
 void gameplay() {
@@ -122,6 +134,12 @@ void gameplay() {
     } else {
       object.setColor(color(255, 255, 255));
     }
+  }
+}
+
+void mousePressed() {
+  if (pointToRectCollision(mouseX, mouseY, width / 2, height / 2, 180, 60)) {
+    println("Clicked Start!");
   }
 }
 
@@ -170,6 +188,20 @@ boolean collision(Player a, GameObject b) {
   
   return false;
 }
+
+
+
+
+
+boolean pointToRectCollision(float pointX, float pointY, float rectX, float rectY, float rectWidth, float rectHeight) {
+  return (pointX > rectX - (rectWidth / 2) && pointX < rectX + (rectWidth / 2)) &&
+    (pointY > rectY - (rectHeight / 2) && pointY < rectY + (rectHeight / 2));
+}
+
+
+
+
+
 
 boolean rectToRectCollision(GameObject a, GameObject b) {
    return (abs(a.getX() - b.getX()) - (a.getWidth() / 2) - (b.getWidth() / 2) <= 0 &&
