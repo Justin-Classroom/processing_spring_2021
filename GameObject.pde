@@ -1,5 +1,4 @@
 class GameObject {
-  
   public float GO_SHAPE; // 0 for rect, 1 for ellipse
   
   boolean isActive;

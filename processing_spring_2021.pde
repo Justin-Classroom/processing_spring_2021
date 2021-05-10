@@ -19,10 +19,17 @@
 // inheritance - extends (parent-child class)
 // polymorhpism - become many things
 
+// todos
+//– complete the health system
+//– make your game transition between start menu and gameplay (state machine)
+//– refactor the start menu button (either into 2 separate classes or one class) using OOP
+
 
 ArrayList<GameObject> gameObjects;
 ArrayList<Obstacle> obstacles;
 Player player;
+Point mouse;
+Button startButton;
 
 static final int PLAYER_POS_X = 100;
 static final int SCORE_POS_X = 800;
@@ -45,6 +52,13 @@ void setup() {
   rectMode(CENTER);
   imageMode(CENTER);
   
+  mouse = new Point();
+  startButton = new Button();
+  startButton.setPos(10000, height / 2);
+  startButton.w = 180;
+  startButton.h = 60;
+  startButton.text = "Start Game";
+  
   playerSprite = loadImage("p1_front.png");
   platformSprite = loadImage("grass.png");
   obstacleSprite1 = loadImage("boxItem.png");
@@ -56,7 +70,7 @@ void setup() {
   // creating a player and score counter
   player = new Player();
   player.setSprite(playerSprite);
-  player.setPos(PLAYER_POS_X, ground - (playerSprite.height / 2));
+  player.setPos(PLAYER_POS_X, ground - (playerSprite.height / 2) - 1);
   gameObjects.add(player);
   
   GameObject score = new ScoreCounter();
@@ -84,22 +98,23 @@ void setup() {
   
 }
 
+int game = 0;
+
 void draw() {
   background(#9A95E3);
   
-  gameMenu();
-  
+  if (game == 0) {
+    gameMenu();
+  } else if (game == 1) {
+    gameplay();
+  }
 }
 
 void gameMenu() {
   textAlign(CENTER, CENTER);
   textSize(40);
   text("Infinite Runner", width / 2, 1*height / 3);
-  textSize(18);
-  text("Start Game", width/ 2, height / 2);
-  noFill();
-  stroke(0, 0, 0);
-  rect(width / 2, height / 2, 180, 60);
+  startButton.draw();
 }
 
 void gameplay() {
@@ -131,6 +146,7 @@ void gameplay() {
     
     if (collision(player, object)) {
       object.setColor(color(255, 0, 0));
+      game = 0;
     } else {
       object.setColor(color(255, 255, 255));
     }
@@ -138,8 +154,11 @@ void gameplay() {
 }
 
 void mousePressed() {
-  if (pointToRectCollision(mouseX, mouseY, width / 2, height / 2, 180, 60)) {
-    println("Clicked Start!");
+  
+  mouse.x = mouseX;
+  mouse.y = mouseY;
+  if (pointToRectCollision(mouse, startButton)) {
+    game = 1;
   }
 }
 
@@ -193,9 +212,9 @@ boolean collision(Player a, GameObject b) {
 
 
 
-boolean pointToRectCollision(float pointX, float pointY, float rectX, float rectY, float rectWidth, float rectHeight) {
-  return (pointX > rectX - (rectWidth / 2) && pointX < rectX + (rectWidth / 2)) &&
-    (pointY > rectY - (rectHeight / 2) && pointY < rectY + (rectHeight / 2));
+boolean pointToRectCollision(Point point, Rect rect) {
+  return (point.x > rect.x - (rect.w / 2) && point.x < rect.x + (rect.w / 2)) &&
+    (point.y > rect.y - (rect.h / 2) && point.y < rect.y + (rect.y / 2));
 }
 
 
