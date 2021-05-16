@@ -28,6 +28,7 @@
 ArrayList<GameObject> gameObjects;
 ArrayList<Obstacle> obstacles;
 Player player;
+ScoreCounter score;
 Point mouse;
 Button startButton;
 
@@ -54,7 +55,7 @@ void setup() {
   
   mouse = new Point();
   startButton = new Button();
-  startButton.setPos(10000, height / 2);
+  startButton.setPos(width / 2, height / 2);
   startButton.w = 180;
   startButton.h = 60;
   startButton.text = "Start Game";
@@ -73,7 +74,7 @@ void setup() {
   player.setPos(PLAYER_POS_X, ground - (playerSprite.height / 2) - 1);
   gameObjects.add(player);
   
-  GameObject score = new ScoreCounter();
+  score = new ScoreCounter();
   score.setPos(SCORE_POS_X, SCORE_POS_Y);
   gameObjects.add(score);
   
@@ -98,14 +99,14 @@ void setup() {
   
 }
 
-int game = 0;
+GameState game = GameState.START;
 
 void draw() {
   background(#9A95E3);
   
-  if (game == 0) {
+  if (game == GameState.START) {
     gameMenu();
-  } else if (game == 1) {
+  } else if (game == GameState.PLAYING) {
     gameplay();
   }
 }
@@ -146,7 +147,9 @@ void gameplay() {
     
     if (collision(player, object)) {
       object.setColor(color(255, 0, 0));
-      game = 0;
+      // teardown - set all obstacle.isActive to false
+      teardown();
+      game = GameState.START;
     } else {
       object.setColor(color(255, 255, 255));
     }
@@ -158,7 +161,7 @@ void mousePressed() {
   mouse.x = mouseX;
   mouse.y = mouseY;
   if (pointToRectCollision(mouse, startButton)) {
-    game = 1;
+    game = GameState.PLAYING;
   }
 }
 
@@ -166,6 +169,15 @@ void keyPressed() {
   if (key == ' ') {
     player.jump();
   }
+}
+
+void teardown() {
+  for (int i = 0; i < obstacles.size(); i++) {
+    Obstacle obstacle = obstacles.get(i);
+    obstacle.isActive = false;
+  }
+  
+  score.reset();
 }
 
 // grab an obstacle

@@ -17,4 +17,6 @@ class ScoreCounter extends GameObject {
   }
   
   public float getScore() { return this.score; }
+  
+  public void reset() { this.score = 0; }
 }
