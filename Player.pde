@@ -4,9 +4,11 @@ class Player extends GameObject {
   private float jumpForce = 20;
   private float gravity = -1;
   private float floor;
+  private boolean isJumping;
   
   Player() {
     GO_SHAPE = 0;
+    isJumping = false;
   }
   
   void setPos(float x, float y) {
@@ -15,7 +17,10 @@ class Player extends GameObject {
   }
   
   void jump() {
-    velocity = jumpForce;
+    if (!isJumping) {
+      velocity = jumpForce;
+      isJumping = true;
+    }
   }
   
   void update(float speed) {
@@ -25,6 +30,7 @@ class Player extends GameObject {
     if (y + (l / 2) > floor) {
       y = floor - (l / 2);
       velocity = 0;
+      isJumping = false;
     } else {
       velocity += gravity;
     }

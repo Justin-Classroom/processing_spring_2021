@@ -9,7 +9,7 @@ class ScoreCounter extends GameObject {
   }
   
   void draw() {
-    text(score, 800, 50);
+    text("Current Score:" + score, 800, 50);
   }
   
   void changeScore(float amount) {

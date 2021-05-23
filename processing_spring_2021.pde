@@ -140,13 +140,12 @@ void gameplay() {
         continue;
     
     if (hasCrossedEnd(object)) {
-      if (object instanceof Platform) object.setPos(i * platformSprite.width, ground + (platformSprite.height / 2));
+      if (object instanceof Platform) object.setPos(width + object.getWidth() / 2, ground + (platformSprite.height / 2));
       if (object instanceof Obstacle) object.isActive = false;
       continue;
     }
     
     if (collision(player, object)) {
-      object.setColor(color(255, 0, 0));
       // teardown - set all obstacle.isActive to false
       teardown();
       game = GameState.START;
@@ -166,7 +165,7 @@ void mousePressed() {
 }
 
 void keyPressed() {
-  if (key == ' ') {
+  if (key == ' ' && game == GameState.PLAYING) {
     player.jump();
   }
 }
@@ -176,6 +175,9 @@ void teardown() {
     Obstacle obstacle = obstacles.get(i);
     obstacle.isActive = false;
   }
+  
+  //reset player position
+  player.setPos(PLAYER_POS_X, ground - (playerSprite.height / 2) - 1);
   
   score.reset();
 }
@@ -203,7 +205,7 @@ boolean hasCrossedEnd(GameObject object) {
   // object.getX() - center of the object
   // object.getWidth(); - full width of the object
   // if right side of the object crosses the left edge of the screen
-  return false;
+  return object.getX() + object.getWidth() / 2 < 0;
 }
 
 boolean collision(Player a, GameObject b) {
@@ -235,8 +237,12 @@ boolean pointToRectCollision(Point point, Rect rect) {
 
 
 boolean rectToRectCollision(GameObject a, GameObject b) {
-   return (abs(a.getX() - b.getX()) - (a.getWidth() / 2) - (b.getWidth() / 2) <= 0 &&
-    abs(a.getY() - b.getY()) - (a.getLength() / 2) - (b.getLength() / 2) <= 0);
+  // only detect the player hitting the left side (~75%) of the obstacle
+  // todo - stand on the platform
+  return a.getX() + a.getWidth() / 2 > b.getX() - b.getWidth() / 2 &&
+    a.getX() - a.getWidth() / 2 < b.getX() - b.getWidth() / 4 &&
+    a.getY() + a.getLength() / 2 > b.getY() - b.getLength() / 2 &&
+    a.getY() - a.getLength() / 2 < b.getY() + b.getLength() / 2;
 }
 
 boolean rectToEllipseCollision(GameObject a, GameObject b) {
